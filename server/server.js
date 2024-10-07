@@ -1,3 +1,4 @@
+import path from "node:path"
 import express from "express"
 import dotenv from "dotenv"
 import { connectDB } from "./config/db.js"
@@ -8,6 +9,9 @@ import mongoose from "mongoose"
 dotenv.config()
 
 const app = express()
+
+const __direname = path.resolve()
+const PORT = process.env.PORT || 5000
 
 // middlewares
 app.use(express.json()) // allow to accept JSON data in the req.body
@@ -107,7 +111,15 @@ app.delete("/api/products/:id", async (req, res) => {
 	}
 })
 
-const PORT = process.env.PORT || 5000
+// production
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__direname, "/client/dist")))
+
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__direname, "client", "dist", "index.html"))
+	})
+}
+
 app.listen(PORT, () => {
 	connectDB()
 	console.log(`Server is running on http://localhost:5000`)
