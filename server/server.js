@@ -66,7 +66,7 @@ app.put("/api/products/:id", async (req, res) => {
 				.json({ success: false, message: "Invalid product id" })
 		}
 
-		const updatedProduct = Product.findByIdAndUpdate(id, product, {
+		const updatedProduct = await Product.findByIdAndUpdate(id, product, {
 			new: true,
 		})
 		res.status(200).json({ success: true, data: updatedProduct })
